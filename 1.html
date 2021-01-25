@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <input id="picField" type="file" name="" />
+    <img id="outImage" src="" alt="">
+    <button onclick="up();">Upload image</button>
+
+    <br>
+
+    <img id="geter" src="" alt="">
+    <button onclick="getImage();">get image</button>
+
+    <script>
+        document.getElementById('picField').onchange = function (evt) {
+            var tgt = evt.target || window.event.srcElement,
+                files = tgt.files;
+
+            // FileReader support
+            if (FileReader && files && files.length) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('outImage').src = fr.result;
+                }
+                fr.readAsDataURL(files[0]);
+            }
+
+            // Not supported
+            else {
+                // fallback -- perhaps submit the input to an iframe and temporarily store
+                // them on the server until the user's session ends.
+            }
+        }
+
+        function up() {
+
+            // Get a reference to the image element
+            var outImage = document.getElementById("outImage");
+
+            var imgCanvas = document.createElement("canvas"),
+                imgContext = imgCanvas.getContext("2d");
+
+            // Make sure canvas is as big as the picture
+            imgCanvas.width = outImage.width;
+            imgCanvas.height = outImage.height;
+
+            // Draw image into canvas element
+            imgContext.drawImage(outImage, 0, 0, outImage.width, outImage.height);
+
+            // Get canvas contents as a data URL
+            var imgAsDataURL = imgCanvas.toDataURL("image/png");
+
+            // Save image into localStorage
+            try {
+                localStorage.setItem("outImage", imgAsDataURL);
+            }
+            catch (e) {
+                console.log("Storage failed: " + e);
+            }
+
+
+        }
+
+        function getImage() {
+            document.getElementById('geter').src = localStorage.getItem("outImage");
+        }
+
+    </script>
+</body>
+
+</html>
